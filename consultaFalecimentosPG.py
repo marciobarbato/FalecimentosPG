@@ -2,8 +2,6 @@ from bs4 import BeautifulSoup
 import requests
 import pandas as pd
 import datetime
-from datetime import date
-from datetime import timedelta
 
 def consultaFalecimentos(fullData):
     URL = "http://app.pontagrossa.pr.gov.br/sisppg/servico_funerario/internet/mostra_hoje.php"
@@ -39,7 +37,7 @@ def extract_data(years_to_compare, starting_day, starting_month, ending_day, end
             day_month_str = actual_date.strftime('%d/%m')
             resulting_data[year]['x'].append(day_month_str)
             resulting_data[year]['y'].append(consultaFalecimentos(date_str))
-            actual_date = actual_date + timedelta(days=1)
+            actual_date = actual_date + datetime.timedelta(days=1)
         
     return resulting_data
 
@@ -57,17 +55,16 @@ def calculate_moving_average(years_to_compare, resulting_data, moving_size):
     return resulting_data
 
 
-data_comeco_ano = datetime.datetime(2020, 5, 1)
-data_atual = data_comeco_ano
+#data_comeco = datetime.datetime(2020, 5, 1)
+data_atual = datetime.datetime(2020, 5, 1)
 
 
 i = 0
-diasCount = 1
+dateCount = 1
 
-while i<diasCount:
-    data_atual = data_atual + timedelta(days=1)
+while i<dateCount:
+    data_atual = data_atual + datetime.timedelta(days=1)
     data_em_texto = data_atual.strftime('%d/%m/%Y')
-    #print ("consulta dia: ", data_em_texto)
     totalDia = consultaFalecimentos(data_em_texto)
     print (data_em_texto,",", totalDia,",",sep="")
     i += 1
