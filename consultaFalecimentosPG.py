@@ -8,22 +8,21 @@ from datetime import timedelta
 def consultaFalecimentos(fullData):
     URL = "http://app.pontagrossa.pr.gov.br/sisppg/servico_funerario/internet/mostra_hoje.php"
     param = "ontem=" + fullData
-    r = requests.get(url = URL, params = param)
-
-    if r.status_code == 200:
-        tables = pd.read_html(r.content,flavor='bs4')
-        count = 0
-        for nome in tables[1][0]:
-            if isinstance(nome, float):
-                break
-            if nome != "Nome":
-                count+=1                         
-                
-    
-        #print("total de nomes",count)
+    try:
+        r = requests.get(url = URL, params = param)
+        if r.status_code == 200:
+            tables = pd.read_html(r.content,flavor='bs4')
+            count = 0
+            for nome in tables[1][0]:
+                if isinstance(nome, float):
+                    break
+                if nome != "Nome":
+                    count+=1                         
+        else:
+            raise Exception("URL return status is not 200")        
         return count
-    else:
-        print('An error has occurred.')
+    except :
+        print("An error happened whilte requesting URL", URL)
         return False
 
 def extract_data(years_to_compare, starting_day, starting_month, ending_day, ending_month):
@@ -57,17 +56,15 @@ def calculate_moving_average(years_to_compare, resulting_data, moving_size):
     return resulting_data
 
 
-data_comeco_ano = datetime.datetime(2020, 5, 1)
-data_atual = data_comeco_ano
+startDate = datetime.datetime(2020, 5, 1)
 
 
 i = 0
 diasCount = 1
 
-while i<diasCount:
-    data_atual = data_atual + timedelta(days=1)
-    data_em_texto = data_atual.strftime('%d/%m/%Y')
-    #print ("consulta dia: ", data_em_texto)
+while i < diasCount:
+    startDate = startDate + timedelta(days=1)
+    data_em_texto = startDate.strftime('%d/%m/%Y')
     totalDia = consultaFalecimentos(data_em_texto)
     print (data_em_texto,",", totalDia,",",sep="")
     i += 1
