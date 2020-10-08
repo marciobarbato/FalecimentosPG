@@ -56,7 +56,7 @@ def calculate_moving_average(years_to_compare, resulting_data, moving_size):
     return resulting_data
 
 
-startDate = datetime.datetime(2020, 5, 1)
+startDate = datetime.datetime(2020, 8, 1)
 
 
 i = 0
